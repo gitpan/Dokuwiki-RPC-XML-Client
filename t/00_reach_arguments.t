@@ -1,5 +1,6 @@
 #! /usr/bin/perl
-use Modern::Perl;
+use strict;
+use warnings;
 use Test::More;
 
 ok(1,"i know it's missing");

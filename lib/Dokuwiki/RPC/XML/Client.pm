@@ -3,7 +3,7 @@ package Dokuwiki::RPC::XML::Client;
 use strict;
 use warnings;
 use parent 'RPC::XML::Client';
-our $VERSION = '0.0';
+our $VERSION = '0.2';
 our %API = qw<
 getPagelist dokuwiki.getPagelist
 getVersion dokuwiki.getVersion
@@ -49,14 +49,16 @@ sub reach {
     $options{file} //= "$ENV{HOME}/.dokuwiki.cookies.txt";
     $class->new
     ( $url 
-    , useragent => [ cookie_jar => { file => $options{file} } ] );
+    , useragent => [ cookie_jar => { file => $options{file} } ]
+    , error_handler => sub { die $_[0] }
+    , fault_handler => sub { die $_[0]->string } );
 }
 
 { no strict 'refs';
     while ( my($method, $call) = each %API ) {
         *{__PACKAGE__."::$method"} = sub {
             my $client = shift;
-            $client->send_request( $call, @_ )
+            $client->send_request( $call, @_ )->value
         }
     }
 };
@@ -156,5 +158,25 @@ using the god damn old and good C<~/.netrc> file.
         or die "can't authenticate with $l";
 
     say $wiki->getVersion->value;
+
+=head1 FUTURE
+
+i'm still experimenting to make my mind up about the right way to do it. it would
+be nice to have both a raw C<RPC::XML::Client> as a singleton. then we could have
+something usable in both way
+
+    use aliased qw<Dokuwiki::RPC::XML::Client::Singleton D>;
+    D::netrc 'unistra';
+    D::login 'https://di.u-strasbg.fr';
+    say "connected to dokuwiki version ". D::getVersion;
+    say for grep /^metiers:/, ids_of D::getAllPages; 
+
+or
+
+    use Dokuwiki::RPC::XML::Client::Singleton ':all';
+    netrc 'unistra';
+    login 'https://di.u-strasbg.fr';
+    say "connected to dokuwiki version ". getVersion;
+    say for grep /^metiers:/, ids_of getAllPages;
 
 =cut

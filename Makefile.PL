@@ -17,19 +17,40 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => "6.30"
   },
   "DISTNAME" => "Dokuwiki-RPC-XML-Client",
-  "EXE_FILES" => [],
+  "EXE_FILES" => [
+    "scripts/dokuwiki-client"
+  ],
   "LICENSE" => "perl",
   "NAME" => "Dokuwiki::RPC::XML::Client",
-  "PREREQ_PM" => {},
-  "TEST_REQUIRES" => {},
-  "VERSION" => "0.001",
+  "PREREQ_PM" => {
+    "Modern::Perl" => 0,
+    "Net::Netrc" => 0,
+    "RPC::XML::Client" => 0,
+    "YAML" => 0,
+    "parent" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
+  "TEST_REQUIRES" => {
+    "Test::More" => 0
+  },
+  "VERSION" => "0.2",
   "test" => {
     "TESTS" => "t/*.t"
   }
 );
 
 
-my %FallbackPrereqs = ();
+my %FallbackPrereqs = (
+  "Modern::Perl" => 0,
+  "Net::Netrc" => 0,
+  "RPC::XML::Client" => 0,
+  "Test::More" => 0,
+  "YAML" => 0,
+  "parent" => 0,
+  "strict" => 0,
+  "warnings" => 0
+);
 
 
 unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
